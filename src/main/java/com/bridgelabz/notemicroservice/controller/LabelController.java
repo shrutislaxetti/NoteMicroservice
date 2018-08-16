@@ -45,7 +45,7 @@ public class LabelController {
 	@PostMapping(value = "/createLabel")
 	public ResponseEntity<LabelDTO> createLabel(HttpServletRequest request, @RequestParam String labelName)
 			throws LabelException, InvalidLabelNameException {
-		
+
 		String userId = request.getHeader("userId");
 		LabelDTO labelDto = labelService.createLabel(userId, labelName);
 
@@ -132,5 +132,25 @@ public class LabelController {
 		List<NoteDTO> notes = labelService.getLabel(userId, labelId);
 
 		return new ResponseEntity<>(notes, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/sortLabelBytitle/{order}")
+	public ResponseEntity<List<LabelDTO>> sortLabelByTitle(HttpServletRequest request, @RequestParam String noteId,
+			@PathVariable String order) throws NoteNotFoundException {
+		String userId = (String) request.getAttribute("UserId");
+
+		List<LabelDTO> labelList = labelService.sortLabelByTitle(userId, noteId, order);
+
+		return new ResponseEntity<>(labelList, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/sortLabelByDate/{order}")
+	public ResponseEntity<List<LabelDTO>> sortLabelByDate(HttpServletRequest request, @PathVariable String order,
+			@RequestParam String noteId) throws NoteNotFoundException {
+		String userId = (String) request.getAttribute("UserId");
+
+		List<LabelDTO> labelList = labelService.sortLabelByDate(userId, noteId, order);
+
+		return new ResponseEntity<>(labelList, HttpStatus.OK);
 	}
 }

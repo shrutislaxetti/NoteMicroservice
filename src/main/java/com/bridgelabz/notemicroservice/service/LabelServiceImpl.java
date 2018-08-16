@@ -1,5 +1,6 @@
 package com.bridgelabz.notemicroservice.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -213,5 +214,41 @@ public class LabelServiceImpl implements LabelService {
 		return  Stream.concat(pinnedNoteDtoList.stream(), unpinnedNoteDtoList.stream())
 				.collect(Collectors.toList());
 
+	}
+	@Override
+	public List<LabelDTO> sortLabelByTitle(String userId, String noteId, String order) throws NoteNotFoundException {
+
+		List<Label> labelList = labelRepository.findAllByUserId(userId);
+
+		if (labelList.isEmpty()) {
+			throw new NoteNotFoundException("No Note Found");
+		}
+		List<LabelDTO> noteDtos;
+		if (order.equalsIgnoreCase("desc")) {
+
+			return labelList.stream().sorted(Comparator.comparing(Label::getLabelName))
+					.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+		}
+		
+		return labelList.stream().sorted(Comparator.comparing(Label::getLabelName).reversed())
+				.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+
+	}
+
+	@Override
+	public List<LabelDTO> sortLabelByDate(String userId, String noteId, String order) throws NoteNotFoundException {
+		List<Label> labelList = labelRepository.findAllByUserId(userId);
+
+		if (labelList.isEmpty()) {
+			throw new NoteNotFoundException("No Note Found");
+		}
+		if (order.equalsIgnoreCase("desc")) {
+
+			return labelList.stream().sorted(Comparator.comparing(Label::getCreatedAt))
+					.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+		}
+		
+		return labelList.stream().sorted(Comparator.comparing(Label::getCreatedAt).reversed())
+				.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
 	}
 }

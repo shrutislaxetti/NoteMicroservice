@@ -1,6 +1,7 @@
 package com.bridgelabz.notemicroservice.controller;
 
 import java.text.ParseException;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,8 +93,9 @@ public class NoteController {
 			throws NoteNotFoundException, GetLinkInfoException {
 
 		String userId = request.getHeader("userId");
-		List<NoteDTO> noteList = noteService.viewAllNotes(userId);
 
+		List<NoteDTO> noteList = noteService.viewAllNotes(userId);
+		noteList.sort(Comparator.comparing(NoteDTO::getTitle).reversed());
 		return new ResponseEntity<>(noteList, HttpStatus.OK);
 	}
 
@@ -136,7 +138,7 @@ public class NoteController {
 	@PutMapping(value = "/delete/{noteId}")
 	public ResponseEntity<Response> deleteNote(HttpServletRequest request, @PathVariable String noteId)
 			throws NoteNotFoundException, UnauthorizedException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.deleteNote(userId, noteId);
 
@@ -177,7 +179,7 @@ public class NoteController {
 	 */
 	@DeleteMapping(value = "/emptyTrash")
 	public ResponseEntity<Response> emptyTrash(HttpServletRequest request) throws NoteNotFoundException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.emptyTrash(userId);
 
@@ -198,7 +200,7 @@ public class NoteController {
 	@GetMapping(value = "/getTrash")
 	public ResponseEntity<List<NoteDTO>> getTrash(HttpServletRequest request)
 			throws NoteNotFoundException, GetLinkInfoException {
-		
+
 		String userId = request.getHeader("userId");
 		List<NoteDTO> trashList = noteService.getTrash(userId);
 
@@ -219,7 +221,7 @@ public class NoteController {
 	@PutMapping(value = "/setColour/{noteId}")
 	public ResponseEntity<Response> addColour(HttpServletRequest request, @PathVariable String noteId,
 			@RequestParam String colour) throws NoteNotFoundException, UnauthorizedException, NoteException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.addColour(userId, noteId, colour);
 
@@ -244,7 +246,7 @@ public class NoteController {
 	@PutMapping(value = "/addReminder/{noteId}")
 	public ResponseEntity<Response> addReminder(HttpServletRequest request, @PathVariable String noteId,
 			@RequestParam String reminder) throws NoteNotFoundException, UnauthorizedException, ReminderException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.addNoteReminder(userId, noteId, reminder);
 
@@ -266,7 +268,7 @@ public class NoteController {
 	@PutMapping(value = "/removeReminder/{noteId}")
 	public ResponseEntity<Response> removeReminder(HttpServletRequest request, @PathVariable String noteId)
 			throws NoteNotFoundException, UnauthorizedException {
-	
+
 		String userId = request.getHeader("userId");
 		noteService.removeReminder(userId, noteId);
 
@@ -288,7 +290,7 @@ public class NoteController {
 	@PutMapping(value = "/addPin/{noteId}")
 	public ResponseEntity<Response> addPin(HttpServletRequest request, @PathVariable String noteId)
 			throws NoteNotFoundException, UnauthorizedException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.addPin(userId, noteId);
 
@@ -311,7 +313,7 @@ public class NoteController {
 	@PutMapping(value = "/removePin/{noteId}")
 	public ResponseEntity<Response> removePin(HttpServletRequest request, @PathVariable String noteId)
 			throws NoteNotFoundException, UnauthorizedException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.removePin(userId, noteId);
 
@@ -334,7 +336,7 @@ public class NoteController {
 	@PutMapping(value = "/addToArchive/{noteId}")
 	public ResponseEntity<Response> addArchive(HttpServletRequest request, @PathVariable String noteId)
 			throws NoteNotFoundException, UnauthorizedException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.archiveNote(userId, noteId);
 
@@ -377,7 +379,7 @@ public class NoteController {
 	@PostMapping(value = "/getArchiveNotes")
 	public ResponseEntity<List<NoteDTO>> viewArchiveNotes(HttpServletRequest request)
 			throws NoteNotFoundException, GetLinkInfoException {
-		
+
 		String userId = request.getHeader("userId");
 		List<NoteDTO> archivedNoteList = noteService.getArchivedNote(userId);
 
@@ -425,7 +427,7 @@ public class NoteController {
 	@PutMapping(value = "/deleteLabelFromNote/{noteId}")
 	public ResponseEntity<Response> deteleLabelFromNote(HttpServletRequest request, @PathVariable String noteId,
 			@RequestParam String labelId) throws NoteNotFoundException, UnauthorizedException, LabelNotFoundException {
-		
+
 		String userId = request.getHeader("userId");
 		noteService.deleteNoteLabel(userId, noteId, labelId);
 
@@ -434,5 +436,28 @@ public class NoteController {
 		response.setStatus(203);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+	@PutMapping(value = "/sortNoteByTitle/{order}")
+	public ResponseEntity<List<NoteDTO>> sortNoteByTitle(HttpServletRequest request, @PathVariable String order)
+			throws NoteNotFoundException, UnauthorizedException, LabelNotFoundException {
+
+		String userId = request.getHeader("userId");
+		List<NoteDTO> listOfNotes=noteService.sortNoteByTitle(userId, order);
+
+		return new ResponseEntity<>(listOfNotes, HttpStatus.OK);
+	}
+
+	@PutMapping(value = "/sortNoteByDate/{order}")
+	public ResponseEntity<List<NoteDTO>> sortNoteByDate(HttpServletRequest request, @PathVariable String order)
+			throws NoteNotFoundException, UnauthorizedException, LabelNotFoundException {
+
+		String userId = request.getHeader("userId");
+		List<NoteDTO>  listOfNotes =noteService.sortNoteByDate(userId, order);
+		
+		return new ResponseEntity<>(listOfNotes, HttpStatus.OK);
+	}
+	
+	
+	
 
 }

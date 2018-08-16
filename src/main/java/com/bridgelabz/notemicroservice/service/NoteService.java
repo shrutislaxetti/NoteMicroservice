@@ -224,4 +224,6 @@ public interface NoteService {
 	public void deleteNoteLabel(String userId, String noteId, String labelId)
 			throws NoteNotFoundException, UnauthorizedException, LabelNotFoundException;
 
+	public List<NoteDTO> sortNoteByDate(String userId, String order) throws NoteNotFoundException;
+	public List<NoteDTO> sortNoteByTitle(String userId, String order) throws NoteNotFoundException;
 }

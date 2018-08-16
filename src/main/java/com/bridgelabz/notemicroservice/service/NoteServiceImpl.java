@@ -2,6 +2,8 @@ package com.bridgelabz.notemicroservice.service;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,6 +111,7 @@ public class NoteServiceImpl implements NoteService {
 					Label label = new Label();
 					label.setLabelName(labelNameList.get(i));
 					label.setUserId(userId);
+					label.setCreatedAt(new Date());
 					labelRepository.save(label);
 
 					labelElasticsearchRepository.save(label);
@@ -119,12 +122,13 @@ public class NoteServiceImpl implements NoteService {
 							.findAllByLabelName(labelNameList.get(i));
 
 					for (int j = 0; j < optionalLabelToSave.size(); j++) {
-						//if (optionalLabelToSave.get(j).getUserId().equalsIgnoreCase(userId)) {
+						if (optionalLabelToSave.get(j).getUserId().equalsIgnoreCase(userId)) {
 							LabelDTO viewLabel = new LabelDTO();
 							viewLabel.setLabelName(optionalLabelToSave.get(j).getLabelName());
 							viewLabel.setLabelId(optionalLabelToSave.get(j).getLabelId());
+							viewLabel.setCreatedAt(optionalLabelToSave.get(j).getCreatedAt());
 							labels.add(viewLabel);
-						//}
+						}
 					}
 				}
 				note.setListOfLabel(labels);
@@ -348,6 +352,7 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@Override
 	public List<NoteDTO> getTrash(String userId) throws NoteNotFoundException, GetLinkInfoException {
+	
 		List<Note> noteList = noteElasticsearchRepository.findAllByUserIdAndTrash(userId, true);
 
 		if (noteList.isEmpty()) {
@@ -372,6 +377,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void addColour(String userId, String noteId, String colour)
 			throws NoteNotFoundException, UnauthorizedException, NoteException {
+		
 		Optional<Note> optionalNote = noteRepository.findById(noteId);
 
 		if (!optionalNote.isPresent()) {
@@ -384,6 +390,7 @@ public class NoteServiceImpl implements NoteService {
 		if (colour == null || colour.trim().length() == 0) {
 			throw new NoteException("Color cannot be empty");
 		}
+		
 		Note note = optionalNote.get();
 		note.setColour(colour);
 		note.setLastUpdated(NoteUtility.getCurrentDate());
@@ -703,6 +710,50 @@ public class NoteServiceImpl implements NoteService {
 		noteRepository.save(note);
 
 		noteElasticsearchRepository.save(note);
+	}
+
+	@Override
+	public List<NoteDTO> sortNoteByTitle(String userId, String order) throws NoteNotFoundException {
+		
+
+		List<Note> noteList = noteElasticsearchRepository.findAllByUserId(userId);
+
+		if (noteList.isEmpty()) {
+			throw new NoteNotFoundException("No Note Found");
+		}
+		
+		List<NoteDTO> noteDtos;
+
+		if (order.equalsIgnoreCase("desc")) {
+			return noteList.stream().sorted(Comparator.comparing(Note::getTitle).reversed())
+					.map(sortedNote -> modelMapper.map(sortedNote, NoteDTO.class)).collect(Collectors.toList());
+		}
+		noteDtos = noteList.stream().sorted(Comparator.comparing(Note::getTitle))
+				.map(sortedNote -> modelMapper.map(sortedNote, NoteDTO.class)).collect(Collectors.toList());
+
+		return noteDtos;
+
+	}
+
+	@Override
+	public List<NoteDTO> sortNoteByDate(String userId, String order) throws NoteNotFoundException {
+	
+		List<Note> noteList = noteElasticsearchRepository.findAllByUserIdAndTrash(userId, false);
+
+		if (noteList.isEmpty()) {
+			throw new NoteNotFoundException("No Note Found");
+		}
+		List<NoteDTO> noteDtos;
+
+		if (order.equalsIgnoreCase("asc")) {
+			return noteList.stream().sorted(Comparator.comparing(Note::getCreatedAt))
+					.map(sortedNote -> modelMapper.map(sortedNote, NoteDTO.class)).collect(Collectors.toList());
+		}
+		noteDtos = noteList.stream().sorted(Comparator.comparing(Note::getCreatedAt).reversed())
+				.map(sortedNote -> modelMapper.map(sortedNote, NoteDTO.class)).collect(Collectors.toList());
+
+		return noteDtos;
+
 	}
 
 }

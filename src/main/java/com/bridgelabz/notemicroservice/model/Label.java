@@ -1,7 +1,10 @@
 package com.bridgelabz.notemicroservice.model;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+
 
 @Document(indexName = "fundoolabel", type = "label")
 public class Label {
@@ -10,6 +13,15 @@ public class Label {
 	private String labelId;
 	private String labelName;
 	private String userId;
+	private Date createdAt;
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 
 	public Label() {
 		super();
