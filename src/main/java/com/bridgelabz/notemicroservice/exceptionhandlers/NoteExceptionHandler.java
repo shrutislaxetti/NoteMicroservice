@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.bridgelabz.notemicroservice.exceptions.GetLinkInfoException;
+import com.bridgelabz.notemicroservice.exceptions.LinkInformationException;
 import com.bridgelabz.notemicroservice.exceptions.InvalidLabelNameException;
 import com.bridgelabz.notemicroservice.exceptions.LabelException;
 import com.bridgelabz.notemicroservice.exceptions.LabelNotFoundException;
@@ -97,8 +97,8 @@ public class NoteExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler(GetLinkInfoException.class)
-	public ResponseEntity<Response> handleGetLinkInfoException(GetLinkInfoException exception) {
+	@ExceptionHandler(LinkInformationException.class)
+	public ResponseEntity<Response> handleGetLinkInfoException(LinkInformationException exception) {
 		logger.info("Error while getting link information " + exception.getMessage(), exception);
 
 		Response response = new Response();

@@ -20,6 +20,8 @@ public class LabelDTO {
 		super();
 	}
 
+	
+
 	public String getLabelId() {
 		return labelId;
 	}

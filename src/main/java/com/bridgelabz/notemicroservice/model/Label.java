@@ -27,6 +27,8 @@ public class Label {
 		super();
 	}
 
+	
+
 	public String getLabelId() {
 		return labelId;
 	}

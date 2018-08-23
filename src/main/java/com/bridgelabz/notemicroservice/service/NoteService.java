@@ -3,7 +3,7 @@ package com.bridgelabz.notemicroservice.service;
 import java.text.ParseException;
 import java.util.List;
 
-import com.bridgelabz.notemicroservice.exceptions.GetLinkInfoException;
+import com.bridgelabz.notemicroservice.exceptions.LinkInformationException;
 import com.bridgelabz.notemicroservice.exceptions.InvalidLabelNameException;
 import com.bridgelabz.notemicroservice.exceptions.LabelException;
 import com.bridgelabz.notemicroservice.exceptions.LabelNotFoundException;
@@ -11,7 +11,7 @@ import com.bridgelabz.notemicroservice.exceptions.NoteException;
 import com.bridgelabz.notemicroservice.exceptions.NoteNotFoundException;
 import com.bridgelabz.notemicroservice.exceptions.ReminderException;
 import com.bridgelabz.notemicroservice.exceptions.UnauthorizedException;
-import com.bridgelabz.notemicroservice.model.CreateNote;
+import com.bridgelabz.notemicroservice.model.CreateNoteDTO;
 import com.bridgelabz.notemicroservice.model.NoteDTO;
 import com.bridgelabz.notemicroservice.model.UpdateNote;
 
@@ -26,10 +26,10 @@ public interface NoteService {
 	 * @throws NoteException
 	 * @throws ReminderException
 	 * @throws ParseException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 */
-	public NoteDTO createNote(CreateNote newNote, String userId)
-			throws NoteException, ReminderException, GetLinkInfoException;
+	public NoteDTO createNote(CreateNoteDTO newNote, String userId)
+			throws NoteException, ReminderException, LinkInformationException;
 
 	/**
 	 * To update a note
@@ -76,10 +76,10 @@ public interface NoteService {
 	 * @return NoteDTO
 	 * @throws NoteNotFoundException
 	 * @throws UnauthorizedException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 */
 	public NoteDTO viewNote(String userId, String noteId)
-			throws NoteNotFoundException, UnauthorizedException, GetLinkInfoException;
+			throws NoteNotFoundException, UnauthorizedException, LinkInformationException;
 
 	/**
 	 * To get list of notes
@@ -87,9 +87,9 @@ public interface NoteService {
 	 * @param userId
 	 * @return list of NoteDTO
 	 * @throws NoteNotFoundException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 */
-	public List<NoteDTO> viewAllNotes(String userId) throws NoteNotFoundException, GetLinkInfoException;
+	public List<NoteDTO> viewAllNotes(String userId) throws NoteNotFoundException, LinkInformationException;
 
 	/**
 	 * To empty trash
@@ -105,9 +105,9 @@ public interface NoteService {
 	 * @param userId
 	 * @return list of NoteDTO
 	 * @throws NoteNotFoundException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 */
-	public List<NoteDTO> getTrash(String userId) throws NoteNotFoundException, GetLinkInfoException;
+	public List<NoteDTO> getTrash(String userId) throws NoteNotFoundException, LinkInformationException;
 
 	/**
 	 * To set color on the note
@@ -192,9 +192,9 @@ public interface NoteService {
 	 * @param userId
 	 * @return list of NoteDTO
 	 * @throws NoteNotFoundException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 */
-	public List<NoteDTO> getArchivedNote(String userId) throws NoteNotFoundException, GetLinkInfoException;
+	public List<NoteDTO> getArchivedNote(String userId) throws NoteNotFoundException, LinkInformationException;
 
 	/**
 	 * To add a label to note
@@ -224,6 +224,16 @@ public interface NoteService {
 	public void deleteNoteLabel(String userId, String noteId, String labelId)
 			throws NoteNotFoundException, UnauthorizedException, LabelNotFoundException;
 
-	public List<NoteDTO> sortNoteByDate(String userId, String order) throws NoteNotFoundException;
-	public List<NoteDTO> sortNoteByTitle(String userId, String order) throws NoteNotFoundException;
+	/**
+	 * 
+	 * @param userId
+	 * @param order
+	 * @param type
+	 * @return
+	 * @throws NoteNotFoundException 
+	 */
+
+	public List<NoteDTO> sortNote(String userId, String order, String type) throws NoteNotFoundException;
+
+	
 }

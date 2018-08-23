@@ -2,7 +2,7 @@ package com.bridgelabz.notemicroservice.service;
 
 import java.util.List;
 
-import com.bridgelabz.notemicroservice.exceptions.GetLinkInfoException;
+import com.bridgelabz.notemicroservice.exceptions.LinkInformationException;
 import com.bridgelabz.notemicroservice.exceptions.InvalidLabelNameException;
 import com.bridgelabz.notemicroservice.exceptions.LabelException;
 import com.bridgelabz.notemicroservice.exceptions.LabelNotFoundException;
@@ -61,11 +61,22 @@ public interface LabelService {
 	 * @param labelId
 	 * @return
 	 * @throws LabelNotFoundException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 * @throws NoteNotFoundException
 	 */
 	public List<NoteDTO> getLabel(String userId, String labelId)
-			throws LabelNotFoundException, GetLinkInfoException, NoteNotFoundException;
+			throws LabelNotFoundException, LinkInformationException, NoteNotFoundException;
+
+	/**
+	 * 
+	 * @param userId
+	 * @param noteId
+	 * @param order
+	 * @param order2 
+	 * @return
+	 * @throws NoteNotFoundException 
+	 */
+	public List<LabelDTO> sortLabel(String userId, String noteId, String type, String order) throws NoteNotFoundException;
 
 	/**
 	 * 
@@ -75,15 +86,4 @@ public interface LabelService {
 	 * @return
 	 * @throws NoteNotFoundException 
 	 */
-	public List<LabelDTO> sortLabelByTitle(String userId, String noteId, String order) throws NoteNotFoundException;
-
-	/**
-	 * 
-	 * @param userId
-	 * @param noteId
-	 * @param order
-	 * @return
-	 * @throws NoteNotFoundException 
-	 */
-	public List<LabelDTO> sortLabelByDate(String userId, String noteId, String order) throws NoteNotFoundException;
 }

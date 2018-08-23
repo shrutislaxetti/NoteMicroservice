@@ -23,7 +23,7 @@ public class Note {
 	private boolean pin;
 	private boolean archive;
 	private List<LabelDTO> listOfLabel=new ArrayList<>();
-	private List<URLMetaData> listOfUrl= new ArrayList<>();
+	private List<URLMetaData> urlList= new ArrayList<>();
 
 	public Note() {
 		super();
@@ -125,12 +125,15 @@ public class Note {
 		this.listOfLabel = listOfLabel;
 	}
 
-	public List<URLMetaData> getListOfUrl() {
-		return listOfUrl;
+	public List<URLMetaData> getUrlList() {
+		return urlList;
 	}
 
-	public void setListOfUrl(List<URLMetaData> listOfUrl) {
-		this.listOfUrl = listOfUrl;
+	public void setUrlList(List<URLMetaData> urlList) {
+		this.urlList = urlList;
 	}
+
+	
+
 
 }

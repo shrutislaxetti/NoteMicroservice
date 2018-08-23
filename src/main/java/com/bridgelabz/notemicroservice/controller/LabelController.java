@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bridgelabz.notemicroservice.exceptions.GetLinkInfoException;
+import com.bridgelabz.notemicroservice.exceptions.LinkInformationException;
 import com.bridgelabz.notemicroservice.exceptions.InvalidLabelNameException;
 import com.bridgelabz.notemicroservice.exceptions.LabelException;
 import com.bridgelabz.notemicroservice.exceptions.LabelNotFoundException;
@@ -122,11 +123,11 @@ public class LabelController {
 	 * @return List of NoteDTO
 	 * @throws LabelNotFoundException
 	 * @throws NoteNotFoundException
-	 * @throws GetLinkInfoException
+	 * @throws LinkInformationException
 	 */
 	@PostMapping(value = "/getLabel{labelId}")
 	public ResponseEntity<List<NoteDTO>> getLabel(HttpServletRequest request, @PathVariable String labelId)
-			throws LabelNotFoundException, GetLinkInfoException, NoteNotFoundException {
+			throws LabelNotFoundException, LinkInformationException, NoteNotFoundException {
 
 		String userId = request.getHeader("userId");
 		List<NoteDTO> notes = labelService.getLabel(userId, labelId);
@@ -134,23 +135,16 @@ public class LabelController {
 		return new ResponseEntity<>(notes, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/sortLabelBytitle/{order}")
+	@GetMapping(value = "/sortLabelBytitle(or)Date")
 	public ResponseEntity<List<LabelDTO>> sortLabelByTitle(HttpServletRequest request, @RequestParam String noteId,
-			@PathVariable String order) throws NoteNotFoundException {
+			@RequestParam(required = false) String type, @RequestParam(required = false) String order)
+			throws NoteNotFoundException {
+
 		String userId = (String) request.getAttribute("UserId");
 
-		List<LabelDTO> labelList = labelService.sortLabelByTitle(userId, noteId, order);
+		List<LabelDTO> labelList = labelService.sortLabel(userId, noteId, type, order);
 
 		return new ResponseEntity<>(labelList, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/sortLabelByDate/{order}")
-	public ResponseEntity<List<LabelDTO>> sortLabelByDate(HttpServletRequest request, @PathVariable String order,
-			@RequestParam String noteId) throws NoteNotFoundException {
-		String userId = (String) request.getAttribute("UserId");
-
-		List<LabelDTO> labelList = labelService.sortLabelByDate(userId, noteId, order);
-
-		return new ResponseEntity<>(labelList, HttpStatus.OK);
-	}
 }

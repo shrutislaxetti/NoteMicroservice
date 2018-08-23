@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import com.bridgelabz.notemicroservice.exceptions.NoteException;
 import com.bridgelabz.notemicroservice.exceptions.ReminderException;
-import com.bridgelabz.notemicroservice.model.CreateNote;
+import com.bridgelabz.notemicroservice.model.CreateNoteDTO;
 import com.bridgelabz.notemicroservice.model.UpdateNote;
 
 
@@ -29,12 +29,13 @@ public class NoteUtility {
 	 * @return boolean
 	 * @throws NoteException
 	 */
-	public static void validateNewNote(CreateNote note) throws NoteException {
+	public static void validateNewNote(CreateNoteDTO note) throws NoteException {
 		if ((note.getTitle() == null || note.getTitle().trim().length() == 0) && (note.getDescription() == null)
 				|| note.getDescription().trim().length() == 0
 						&& (note.getColour() == null || note.getColour().trim().length() == 0)) {
 			throw new NoteException("Title ,Description and Colour cannot be empty");
 		}
+		
 	}
 
 	/**

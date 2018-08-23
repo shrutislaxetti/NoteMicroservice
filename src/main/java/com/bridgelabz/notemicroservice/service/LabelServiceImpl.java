@@ -1,5 +1,6 @@
 package com.bridgelabz.notemicroservice.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bridgelabz.notemicroservice.exceptions.GetLinkInfoException;
+import com.bridgelabz.notemicroservice.exceptions.LinkInformationException;
 import com.bridgelabz.notemicroservice.exceptions.InvalidLabelNameException;
 import com.bridgelabz.notemicroservice.exceptions.LabelException;
 import com.bridgelabz.notemicroservice.exceptions.LabelNotFoundException;
@@ -94,10 +95,9 @@ public class LabelServiceImpl implements LabelService {
 			throw new LabelNotFoundException("No Labels found");
 		}
 
-		return  labelList.stream()
-				.map(labelStream -> modelMapper.map(labelStream, LabelDTO.class)).collect(Collectors.toList());
+		return labelList.stream().map(labelStream -> modelMapper.map(labelStream, LabelDTO.class))
+				.collect(Collectors.toList());
 
-		
 	}
 
 	/**
@@ -185,12 +185,13 @@ public class LabelServiceImpl implements LabelService {
 	 * @param labelId
 	 * @return list of note
 	 * @throws LabelNotFoundException
-	 * @throws GetLinkInfoException 
-	 * @throws NoteNotFoundException 
+	 * @throws LinkInformationException
+	 * @throws NoteNotFoundException
 	 */
 	@Override
-	public List<NoteDTO> getLabel(String userId, String labelId) throws LabelNotFoundException, GetLinkInfoException, NoteNotFoundException {
-		
+	public List<NoteDTO> getLabel(String userId, String labelId)
+			throws LabelNotFoundException, LinkInformationException, NoteNotFoundException {
+
 		Optional<Label> optionalLabel = labelRepository.findByLabelIdAndUserId(labelId, userId);
 
 		if (!optionalLabel.isPresent()) {
@@ -211,44 +212,47 @@ public class LabelServiceImpl implements LabelService {
 		List<NoteDTO> unpinnedNoteDtoList = noteDtos.stream().filter(noteStream -> !noteStream.getPin())
 				.collect(Collectors.toList());
 
-		return  Stream.concat(pinnedNoteDtoList.stream(), unpinnedNoteDtoList.stream())
-				.collect(Collectors.toList());
+		return Stream.concat(pinnedNoteDtoList.stream(), unpinnedNoteDtoList.stream()).collect(Collectors.toList());
 
 	}
+
 	@Override
-	public List<LabelDTO> sortLabelByTitle(String userId, String noteId, String order) throws NoteNotFoundException {
+	public List<LabelDTO> sortLabel(String userId, String noteId, String type, String order)
+			throws NoteNotFoundException {
 
 		List<Label> labelList = labelRepository.findAllByUserId(userId);
 
 		if (labelList.isEmpty()) {
 			throw new NoteNotFoundException("No Note Found");
 		}
-		List<LabelDTO> noteDtos;
-		if (order.equalsIgnoreCase("desc")) {
-
-			return labelList.stream().sorted(Comparator.comparing(Label::getLabelName))
+		List<LabelDTO> labelDtos = new ArrayList<>();
+		if (type == null) {
+			labelDtos = labelList.stream().sorted(Comparator.comparing(Label::getLabelName))
 					.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
 		}
-		
-		return labelList.stream().sorted(Comparator.comparing(Label::getLabelName).reversed())
-				.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
 
-	}
+		else if (type.equalsIgnoreCase("title")) {
+			if (order.equals("null") || order.equalsIgnoreCase("desc")) {
 
-	@Override
-	public List<LabelDTO> sortLabelByDate(String userId, String noteId, String order) throws NoteNotFoundException {
-		List<Label> labelList = labelRepository.findAllByUserId(userId);
+				return labelList.stream().sorted(Comparator.comparing(Label::getLabelName))
+						.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+			}
 
-		if (labelList.isEmpty()) {
-			throw new NoteNotFoundException("No Note Found");
-		}
-		if (order.equalsIgnoreCase("desc")) {
-
-			return labelList.stream().sorted(Comparator.comparing(Label::getCreatedAt))
+			labelDtos = labelList.stream().sorted(Comparator.comparing(Label::getLabelName).reversed())
 					.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+
+		} else if (type.equalsIgnoreCase("date")) {
+			if (order.equals("null") || order.equalsIgnoreCase("desc")) {
+
+				return labelList.stream().sorted(Comparator.comparing(Label::getCreatedAt))
+						.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+			}
+
+			labelDtos = labelList.stream().sorted(Comparator.comparing(Label::getCreatedAt).reversed())
+					.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+
 		}
-		
-		return labelList.stream().sorted(Comparator.comparing(Label::getCreatedAt).reversed())
-				.map(sortedNote -> modelMapper.map(sortedNote, LabelDTO.class)).collect(Collectors.toList());
+		return labelDtos;
+
 	}
 }

@@ -2,7 +2,7 @@ package com.bridgelabz.notemicroservice.model;
 
 import java.util.List;
 
-public class CreateNote {
+public class CreateNoteDTO {
 
 	private String title;
 	private String description;
@@ -13,7 +13,7 @@ public class CreateNote {
 	private List<String> listOfLabel;
 	
 
-	public CreateNote() {
+	public CreateNoteDTO() {
 		super();
 	}
 

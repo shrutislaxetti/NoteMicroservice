@@ -15,7 +15,7 @@ public class NoteDTO {
 	private boolean pin;
 	private boolean archive;
 	private List<LabelDTO> listOfLabel;
-    private List<URLMetaData> listOfUrl;
+    private List<URLMetaData> urlList;
 	
 	public String getColour() {
 		return colour;
@@ -101,11 +101,13 @@ public class NoteDTO {
 		this.listOfLabel = listOfLabel;
 	}
 
-	public List<URLMetaData> getListOfUrl() {
-		return listOfUrl;
+	public List<URLMetaData> getUrlList() {
+		return urlList;
 	}
 
-	public void setListOfUrl(List<URLMetaData> listOfUrl) {
-		this.listOfUrl = listOfUrl;
-}
+	public void setUrlList(List<URLMetaData> urlList) {
+		this.urlList = urlList;
+	}
+
+	
 }
